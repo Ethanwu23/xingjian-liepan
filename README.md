@@ -8,7 +8,7 @@
 - 数据驱动的指标卡、分项图表、规则信号与跨资产路径。
 - 环比、同比、三个月年化的确定性计算函数。
 - 计算引擎单元测试。
-- 2026 年 6 月演示快照，尚未连接实时 BLS 数据。
+- Python 定时任务从 BLS Public Data API 更新版本化数据快照。
 
 ## 本地运行
 
@@ -22,9 +22,18 @@ npm run dev
 ## 验证
 
 ```bash
-npm run test:unit
-npm run build
+npm run lint
+npm test
 ```
+
+## 更新 CPI 数据
+
+```bash
+npm run data:update
+```
+
+更新器默认使用 BLS 未注册额度；如已申请 API Key，可通过环境变量 `BLS_API_KEY` 提升查询额度。
+GitHub Actions 在工作日 UTC 15:30（北京时间 23:30）自动运行，只有官方数据发生变化时才会提交新快照，也支持手动触发。
 
 详细路线见 `docs/ROADMAP.md`。
 

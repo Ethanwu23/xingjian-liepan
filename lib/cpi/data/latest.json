@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "source": "U.S. Bureau of Labor Statistics CPI News Release",
+  "sourceUrl": "https://www.bls.gov/news.release/cpi.nr0.htm",
+  "releaseMonth": "2026-06",
+  "updatedAt": "2026-07-14T12:30:00Z",
+  "report": {
+    "releaseMonth": "2026年6月",
+    "headline": "核心通胀延续温和区间，市场可继续观察降温的连续性",
+    "summary": "BLS 最新数据显示，总 CPI 环比 -0.40%，同比 +3.50%；核心 CPI 环比 +0.00%，同比 +2.60%。住房环比 +0.10%，能源环比 -5.70%。",
+    "confidence": 79,
+    "metrics": [
+      { "label": "总 CPI 环比", "value": -0.4, "note": "同比 +3.50%" },
+      { "label": "核心 CPI 环比", "value": 0.0, "note": "季调指数计算" },
+      { "label": "核心 CPI 同比", "value": 2.6, "note": "未季调指数计算" },
+      { "label": "住房环比", "value": 0.1, "note": "2021 年 1 月以来最小涨幅" },
+      { "label": "能源环比", "value": -5.7, "note": "总项下降的主要来源" }
+    ],
+    "components": [
+      { "name": "汽油", "mom": -9.7 },
+      { "name": "能源", "mom": -5.7 },
+      { "name": "二手车", "mom": -0.2 },
+      { "name": "CPI 总项", "mom": -0.4 },
+      { "name": "核心 CPI", "mom": 0.0 },
+      { "name": "住房", "mom": 0.1 },
+      { "name": "主要居所租金", "mom": 0.1 },
+      { "name": "食品", "mom": 0.2 }
+    ],
+    "signals": [
+      { "title": "核心通胀趋势", "evidence": "核心 CPI 环比 +0.00%，同比 +2.60%。", "level": "cooling", "tag": "降温" },
+      { "title": "住房粘性", "evidence": "住房环比 +0.10%，主要居所租金环比 +0.10%。", "level": "cooling", "tag": "改善" },
+      { "title": "能源波动", "evidence": "能源环比 -5.70%，汽油环比 -9.70%。", "level": "watch", "tag": "观察" }
+    ],
+    "focus": [
+      { "name": "核心 CPI", "value": 0.0, "meaning": "决定通胀趋势与短端利率预期的核心读数。" },
+      { "name": "住房", "value": 0.1, "meaning": "权重大、调整慢，需要连续数月确认方向。" },
+      { "name": "主要居所租金", "value": 0.1, "meaning": "观察住房通胀向官方指数传导的速度。" },
+      { "name": "二手车", "value": -0.2, "meaning": "商品通胀中波动较大的领先观察项。" },
+      { "name": "能源 / 汽油", "value": -5.7, "meaning": "影响总项 CPI 与短期通胀预期，但月度波动较大。" }
+    ],
+    "assets": [
+      { "name": "美债利率", "bias": "核心降温利多前端", "reason": "核心环比和同比共同影响政策利率预期。" },
+      { "name": "美元", "bias": "关注相对利差", "reason": "美国核心通胀会通过利率路径改变美元利差优势。" },
+      { "name": "权益 / 黄金", "bias": "关注实际利率", "reason": "通胀与名义利率共同决定估值和黄金持有成本。" },
+      { "name": "下一验证点", "bias": "等待下一期数据", "reason": "单月读数需结合 PPI、就业和后续 CPI 交叉验证。" }
+    ]
+  },
+  "series": {}
+}

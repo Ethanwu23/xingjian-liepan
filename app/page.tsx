@@ -1,4 +1,4 @@
-import { cpiReport } from "../lib/cpi/demo-data";
+import { cpiDataMetadata, cpiReport } from "../lib/cpi/latest-data";
 
 function formatPercent(value: number) {
   const sign = value > 0 ? "+" : value < 0 ? "−" : "";
@@ -25,7 +25,7 @@ export default function Home() {
         <nav aria-label="主导航">
           <a className="active" href="#report">CPI 研究舱</a>
           <a href="#roadmap">模块航图</a>
-          <span className="status"><i /> 演示数据在线</span>
+          <span className="status"><i /> BLS 数据已同步</span>
         </nav>
       </header>
 
@@ -39,7 +39,7 @@ export default function Home() {
           </p>
           <div className="hero-actions">
             <a className="primary-btn" href="#report">进入研究舱 <span>↘</span></a>
-            <span className="stamp">数据快照 · {cpiReport.releaseMonth}</span>
+            <span className="stamp">BLS 数据快照 · {cpiReport.releaseMonth}</span>
           </div>
         </div>
         <div className="radar-card" aria-label="通胀雷达摘要">
@@ -65,7 +65,7 @@ export default function Home() {
           </div>
           <div className="release-meta">
             <span>报告期 {cpiReport.releaseMonth}</span>
-            <span className="demo-tag">演示快照</span>
+            <span className="demo-tag">自动更新</span>
           </div>
         </div>
 
@@ -177,7 +177,10 @@ export default function Home() {
       <footer>
         <div className="brand"><span className="brand-mark">星</span><span><strong>星舰猎盘</strong><small>MACRO INTELLIGENCE PLATFORM</small></span></div>
         <p>数据有源，计算可验，观点可追溯。</p>
-        <small>演示版本 · 不构成投资建议</small>
+        <small>
+          数据来源：<a href={cpiDataMetadata.sourceUrl}>U.S. Bureau of Labor Statistics</a>
+          {" · "}不构成投资建议
+        </small>
       </footer>
     </main>
   );

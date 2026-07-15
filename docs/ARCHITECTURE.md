@@ -3,7 +3,7 @@
 ## 1. 当前定位
 
 星舰猎盘是模块化宏观交易研究平台，当前仓库以单个 Next/Vinext 应用承载平台外壳和研究模块。
-`cpi-research` 是第一个业务模块，目前处于 v0.1 演示数据阶段。
+`cpi-research` 是第一个业务模块，目前通过 Python 定时任务同步 BLS 官方数据。
 
 ## 2. 目录边界
 
@@ -13,8 +13,12 @@
 ├── lib/
 │   └── cpi/              # cpi-research 领域代码
 │       ├── calculator.ts # 确定性指标计算
-│       ├── demo-data.ts  # 页面演示快照
+│       ├── data/         # 版本化 BLS 数据快照
+│       ├── latest-data.ts# 前端数据适配
 │       └── types.ts      # CPI 报告领域类型
+├── python/cpi_research/  # BLS 客户端、计算与快照生成
+├── scripts/              # 数据更新命令入口
+├── .github/workflows/    # 定时更新任务
 ├── tests/                # 单元测试与构建后 HTML 验收测试
 ├── db/                   # 平台共享数据库连接和 schema
 ├── drizzle/              # 数据库迁移元数据
@@ -36,14 +40,15 @@
 ## 3. CPI Research 的调用链
 
 ```text
-lib/cpi/demo-data.ts ─┐
-lib/cpi/types.ts ─────┼─> app/page.tsx ─> Vinext 构建 ─> worker/index.ts
-lib/cpi/calculator.ts └─> tests/cpi-calculator.test.ts
-                              dist 输出 ─> tests/rendered-html.test.mjs
+BLS API ─> python/cpi_research ─> lib/cpi/data/latest.json
+                                      │
+lib/cpi/types.ts ─────────────────────┼─> app/page.tsx ─> Vinext ─> worker/index.ts
+lib/cpi/calculator.ts ─> TS 单元测试  └─> Python 快照测试
+                                              dist 输出 ─> HTML 验收测试
 ```
 
 计算函数保持无副作用，由测试锁定公式；页面只消费结构化结果，不承担宏观指标计算。
-接入 BLS API 后，原始快照、计算结果和报告应继续分层，避免演示数据、外部响应和展示模型相互耦合。
+Python 更新器只在数据发生变化时原子替换 JSON，避免定时任务产生无意义提交。环比使用季调序列，同比使用未季调序列。
 
 ## 4. 后续模块约定
 

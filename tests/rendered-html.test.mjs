@@ -25,7 +25,8 @@ test("server-renders the 星舰猎盘 CPI research dashboard", async () => {
   assert.match(html, /美国 CPI 分项跟踪/);
   assert.match(html, /交易信号矩阵/);
   assert.match(html, /模块航图/);
-  assert.match(html, /演示快照/);
+  assert.match(html, /自动更新/);
+  assert.match(html, /U\.S\. Bureau of Labor Statistics/);
 });
 
 test("ships production metadata without starter preview markers", async () => {

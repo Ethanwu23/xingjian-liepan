@@ -40,4 +40,9 @@ next-env.d.ts
 /.wrangler/
 /outputs/
 /work/
+
+# python
+__pycache__/
+*.py[cod]
+.pytest_cache/
 # 星舰猎盘xingjian-liepan投研项目过滤规则
