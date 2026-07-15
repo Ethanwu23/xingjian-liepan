@@ -1,0 +1,184 @@
+import { cpiReport } from "../lib/cpi/demo-data";
+
+function formatPercent(value: number) {
+  const sign = value > 0 ? "+" : value < 0 ? "−" : "";
+  return `${sign}${Math.abs(value).toFixed(2)}%`;
+}
+
+function tone(value: number) {
+  return value > 0 ? "hot" : value < 0 ? "cool" : "flat";
+}
+
+const maxBar = Math.max(...cpiReport.components.map((item) => Math.abs(item.mom)));
+
+export default function Home() {
+  return (
+    <main>
+      <header className="topbar">
+        <a className="brand" href="#top" aria-label="星舰猎盘首页">
+          <span className="brand-mark">星</span>
+          <span>
+            <strong>星舰猎盘</strong>
+            <small>STARSHIP MARKET INTELLIGENCE</small>
+          </span>
+        </a>
+        <nav aria-label="主导航">
+          <a className="active" href="#report">CPI 研究舱</a>
+          <a href="#roadmap">模块航图</a>
+          <span className="status"><i /> 演示数据在线</span>
+        </nav>
+      </header>
+
+      <section className="hero" id="top">
+        <div className="hero-copy">
+          <p className="eyebrow">MISSION 01 · CPI RESEARCH</p>
+          <h1>把宏观数据，转译成<br /><em>可交易的信号。</em></h1>
+          <p className="hero-note">
+            星舰猎盘的第一座研究舱：用确定性计算锁定事实，用结构化分析解释通胀，
+            把每月 CPI 发布变成一份清晰、可追溯的交易备忘录。
+          </p>
+          <div className="hero-actions">
+            <a className="primary-btn" href="#report">进入研究舱 <span>↘</span></a>
+            <span className="stamp">数据快照 · {cpiReport.releaseMonth}</span>
+          </div>
+        </div>
+        <div className="radar-card" aria-label="通胀雷达摘要">
+          <div className="radar-grid" />
+          <div className="orbit orbit-one" />
+          <div className="orbit orbit-two" />
+          <div className="radar-center">
+            <span>CORE CPI</span>
+            <strong>{formatPercent(cpiReport.metrics[1].value)}</strong>
+            <small>月环比</small>
+          </div>
+          <span className="radar-label label-a">能源冲击</span>
+          <span className="radar-label label-b">住房粘性</span>
+          <span className="radar-label label-c">服务降温</span>
+        </div>
+      </section>
+
+      <section className="report-shell" id="report">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">INFLATION BRIEFING</p>
+            <h2>美国 CPI 分项跟踪</h2>
+          </div>
+          <div className="release-meta">
+            <span>报告期 {cpiReport.releaseMonth}</span>
+            <span className="demo-tag">演示快照</span>
+          </div>
+        </div>
+
+        <article className="verdict">
+          <span className="verdict-index">01 / 核心判断</span>
+          <h3>{cpiReport.headline}</h3>
+          <p>{cpiReport.summary}</p>
+          <div className="confidence"><span style={{ width: `${cpiReport.confidence}%` }} /> </div>
+          <small>信号置信度 {cpiReport.confidence}% · 基于规则引擎，不代表投资建议</small>
+        </article>
+
+        <div className="metric-grid">
+          {cpiReport.metrics.map((metric) => (
+            <article className="metric-card" key={metric.label}>
+              <span>{metric.label}</span>
+              <strong className={tone(metric.value)}>{formatPercent(metric.value)}</strong>
+              <p>{metric.note}</p>
+            </article>
+          ))}
+        </div>
+
+        <div className="analysis-grid">
+          <article className="panel bar-panel">
+            <div className="panel-title">
+              <div><span>02</span><h3>分项环比变化</h3></div>
+              <small>单位：%</small>
+            </div>
+            <div className="bar-chart" role="img" aria-label="CPI各分项环比变化条形图">
+              {cpiReport.components.map((item) => (
+                <div className="bar-row" key={item.name}>
+                  <span className="bar-name">{item.name}</span>
+                  <div className="bar-track">
+                    <span
+                      className={`bar ${tone(item.mom)}`}
+                      style={{ width: `${Math.max(3, Math.abs(item.mom) / maxBar * 100)}%` }}
+                    />
+                  </div>
+                  <strong className={tone(item.mom)}>{formatPercent(item.mom)}</strong>
+                </div>
+              ))}
+            </div>
+          </article>
+
+          <article className="panel signal-panel">
+            <div className="panel-title">
+              <div><span>03</span><h3>交易信号矩阵</h3></div>
+              <small>规则引擎输出</small>
+            </div>
+            <div className="signal-list">
+              {cpiReport.signals.map((signal) => (
+                <div className="signal-item" key={signal.title}>
+                  <span className={`signal-light ${signal.level}`} />
+                  <div><strong>{signal.title}</strong><p>{signal.evidence}</p></div>
+                  <b>{signal.tag}</b>
+                </div>
+              ))}
+            </div>
+          </article>
+        </div>
+
+        <article className="panel trader-panel">
+          <div className="panel-title">
+            <div><span>04</span><h3>交易员最关注的分项</h3></div>
+            <small>事实 → 含义 → 风险</small>
+          </div>
+          <div className="trader-table">
+            <div className="table-head"><span>分项</span><span>环比</span><span>交易含义</span></div>
+            {cpiReport.focus.map((row) => (
+              <div className="table-row" key={row.name}>
+                <strong>{row.name}</strong>
+                <b className={tone(row.value)}>{formatPercent(row.value)}</b>
+                <p>{row.meaning}</p>
+              </div>
+            ))}
+          </div>
+        </article>
+      </section>
+
+      <section className="asset-section">
+        <div className="section-heading inverse">
+          <div><p className="eyebrow">CROSS-ASSET TRANSLATION</p><h2>从通胀读数到资产路径</h2></div>
+          <p>不是预测价格，而是梳理影响链条。</p>
+        </div>
+        <div className="asset-grid">
+          {cpiReport.assets.map((asset, index) => (
+            <article key={asset.name}>
+              <span>0{index + 1}</span>
+              <h3>{asset.name}</h3>
+              <strong>{asset.bias}</strong>
+              <p>{asset.reason}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="roadmap" id="roadmap">
+        <div className="section-heading">
+          <div><p className="eyebrow">STARSHIP MODULE MAP</p><h2>星舰猎盘 · 模块航图</h2></div>
+          <p>统一数据协议，每个研究舱独立演进。</p>
+        </div>
+        <div className="module-grid">
+          <article className="module-card current"><span>01 · ONLINE</span><h3>CPI Research</h3><p>通胀分项、趋势判断、跨资产影响</p><b>当前建设中 →</b></article>
+          <article className="module-card"><span>02 · PLANNED</span><h3>FOMC Radar</h3><p>利率路径、点阵图与政策语言变化</p></article>
+          <article className="module-card"><span>03 · PLANNED</span><h3>Jobs Monitor</h3><p>非农、失业率、工资与劳动力再平衡</p></article>
+          <article className="module-card"><span>04 · PLANNED</span><h3>Liquidity Map</h3><p>美元流动性、财政账户与风险偏好</p></article>
+        </div>
+      </section>
+
+      <footer>
+        <div className="brand"><span className="brand-mark">星</span><span><strong>星舰猎盘</strong><small>MACRO INTELLIGENCE PLATFORM</small></span></div>
+        <p>数据有源，计算可验，观点可追溯。</p>
+        <small>演示版本 · 不构成投资建议</small>
+      </footer>
+    </main>
+  );
+}
