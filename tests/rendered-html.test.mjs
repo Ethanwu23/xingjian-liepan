@@ -84,6 +84,37 @@ test("keeps the official June dot-plot participant counts", async () => {
   assert.deepEqual(snapshot.vote, { for: 12, against: 0 });
 });
 
+test("server-renders the Jobs Monitor module", async () => {
+  const response = await render("/jobs");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+
+  assert.match(html, /MISSION 03 · JOBS MONITOR/);
+  assert.match(html, /非农新增趋势/);
+  assert.match(html, /失业与劳动供给/);
+  assert.match(html, /工资压力仪表/);
+  assert.match(html, /劳动力供需再平衡/);
+  assert.match(html, /57K/);
+  assert.match(html, /bls\.gov/);
+});
+
+test("keeps the official Jobs Monitor snapshot values", async () => {
+  const dataUrl = new URL("../lib/jobs/data/latest.json", import.meta.url);
+  const snapshot = JSON.parse(await readFile(dataUrl, "utf8"));
+
+  assert.deepEqual(
+    snapshot.payrollTrend.map(({ value }) => value),
+    [148, 129, 57],
+  );
+  assert.equal(snapshot.metrics.find(({ label }) => label === "失业率 U-3").value, 4.2);
+  assert.equal(snapshot.metrics.find(({ label }) => label === "劳动参与率").value, 61.5);
+  assert.equal(snapshot.wages.find(({ label }) => label === "时薪同比").value, 3.5);
+  assert.equal(
+    snapshot.rebalancing.find(({ label }) => label === "空缺/失业者").value,
+    1.04,
+  );
+});
+
 test("ships production metadata without starter preview markers", async () => {
   const response = await render();
   const html = await response.text();

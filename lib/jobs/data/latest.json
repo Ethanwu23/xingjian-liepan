@@ -1,0 +1,55 @@
+{
+  "reportMonth": "2026年6月",
+  "releaseDate": "2026-07-02",
+  "updatedAt": "2026-07-02T12:30:00Z",
+  "employmentSituationUrl": "https://www.bls.gov/news.release/archives/empsit_07022026.htm",
+  "joltsUrl": "https://www.bls.gov/news.release/archives/jolts_06302026.pdf",
+  "headline": "就业增量继续降温，劳动力供需接近均衡，但工资黏性仍未完全消失",
+  "summary": "6月非农仅增加5.7万人，4月和5月合计再下修7.4万人。失业率回落至4.2%，但劳动参与率同步降至61.5%，说明表面改善部分来自劳动力退出。5月职位空缺约760万、每名失业者约对应1.04个空缺，供需已接近均衡；平均时薪同比仍增长3.5%，工资压力温和但尚未完全解除。",
+  "metrics": [
+    { "label": "非农新增", "value": 57, "unit": "K", "previous": 129, "note": "12个月平均 +36K", "tone": "cooling" },
+    { "label": "失业率 U-3", "value": 4.2, "unit": "%", "previous": 4.3, "note": "月度下降 0.1pct", "tone": "balanced" },
+    { "label": "平均时薪同比", "value": 3.5, "unit": "%", "note": "月环比 +0.3%", "tone": "watch" },
+    { "label": "劳动参与率", "value": 61.5, "unit": "%", "previous": 61.8, "note": "劳动力减少 720K", "tone": "cooling" },
+    { "label": "职位空缺", "value": 7.594, "unit": "M", "previous": 7.585, "note": "5月 JOLTS", "tone": "balanced" }
+  ],
+  "payrollTrend": [
+    { "month": "4月", "value": 148, "status": "revised" },
+    { "month": "5月", "value": 129, "status": "revised" },
+    { "month": "6月", "value": 57, "status": "preliminary" }
+  ],
+  "industries": [
+    { "name": "专业和商业服务", "value": 36 },
+    { "name": "社会援助", "value": 25 },
+    { "name": "医疗保健", "value": 22 },
+    { "name": "建筑业", "value": 11 },
+    { "name": "制造业", "value": 3 },
+    { "name": "休闲和酒店", "value": -61 }
+  ],
+  "unemployment": [
+    { "label": "U-3失业率", "value": 4.2, "unit": "%", "previous": 4.3, "note": "失业人数 709.4万", "tone": "balanced" },
+    { "label": "U-6广义失业率", "value": 7.9, "unit": "%", "previous": 8.1, "note": "包含就业不足", "tone": "balanced" },
+    { "label": "劳动参与率", "value": 61.5, "unit": "%", "previous": 61.8, "note": "环比 -0.3pct", "tone": "cooling" },
+    { "label": "就业人口比", "value": 59.0, "unit": "%", "previous": 59.2, "note": "环比 -0.2pct", "tone": "cooling" },
+    { "label": "长期失业占比", "value": 27.3, "unit": "%", "note": "长期失业 193.7万", "tone": "watch" }
+  ],
+  "wages": [
+    { "label": "平均时薪", "value": 37.64, "unit": "$", "previous": 37.51, "note": "环比增加 $0.13", "tone": "watch" },
+    { "label": "时薪月环比", "value": 0.3, "unit": "%", "note": "私人非农全体员工", "tone": "watch" },
+    { "label": "时薪同比", "value": 3.5, "unit": "%", "note": "较一年前 $36.36", "tone": "watch" },
+    { "label": "平均每周工时", "value": 34.3, "unit": "H", "previous": 34.3, "note": "环比持平", "tone": "balanced" }
+  ],
+  "rebalancing": [
+    { "label": "职位空缺", "value": 7.594, "unit": "M", "note": "空缺率 4.6%" },
+    { "label": "招聘", "value": 5.170, "unit": "M", "note": "招聘率 3.3%" },
+    { "label": "主动离职", "value": 3.1, "unit": "M", "note": "离职率 1.9%" },
+    { "label": "裁员与解雇", "value": 1.7, "unit": "M", "note": "5月基本持平" },
+    { "label": "空缺/失业者", "value": 1.04, "unit": "X", "note": "接近一对一均衡" }
+  ],
+  "signals": [
+    { "title": "招聘需求降温", "evidence": "6月非农 +57K，明显低于4月和5月；前两月合计下修74K。", "implication": "企业扩张意愿减弱，但尚未出现全面裁员。", "tone": "cooling" },
+    { "title": "失业率改善质量偏弱", "evidence": "U-3降至4.2%，但参与率降0.3pct、劳动力减少720K。", "implication": "不能只看失业率下降，需要同时观察劳动供给。", "tone": "watch" },
+    { "title": "供需接近均衡", "evidence": "5月职位空缺759.4万，每名失业者约对应1.04个空缺。", "implication": "疫情后极度紧张的劳动力市场已明显正常化。", "tone": "balanced" },
+    { "title": "工资仍有黏性", "evidence": "平均时薪月增0.3%、同比3.5%，平均工时保持34.3小时。", "implication": "工资通胀温和降温，但仍需持续确认。", "tone": "watch" }
+  ]
+}

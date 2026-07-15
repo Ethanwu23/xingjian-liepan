@@ -660,7 +660,7 @@ JSON 是纯数据，不是执行命令。
 
 ## 8. 网页代码逐份解析
 
-除了首页 CPI Research，项目现在还有 `/fomc` 第二座研究舱。两者共用品牌、颜色变量和页脚原则，但各自读取独立数据文件，互不混在一起。
+除了首页 CPI Research，项目现在还有 `/fomc` 和 `/jobs` 两座研究舱。三个页面共用品牌、颜色变量和页脚原则，但各自读取独立数据文件，互不混在一起。
 
 ### 8.1 `app/layout.tsx`
 
@@ -860,6 +860,27 @@ cpiReport.metrics.map((metric) => (...))
 - `latest-data.ts` 把 JSON 转成页面可安全读取的 TypeScript 数据；
 - FOMC 数据与 CPI 数据分目录保存，后续更新其中一个模块不会误伤另一个模块。
 
+### 8.11 `app/jobs/page.tsx`
+
+① 要实现什么：把 BLS 的就业报告和 JOLTS 职位流动报告放在一张“就业体检单”中。
+
+② 页面分区：
+
+- 非农趋势展示最近三个月新增岗位、前值修订和主要行业贡献；
+- 失业与劳动供给同时观察 U-3、U-6、劳动参与率和就业人口比；
+- 工资仪表展示平均时薪、环比、同比和平均每周工时；
+- 再平衡区展示职位空缺、招聘、主动离职、裁员以及每位失业者对应的空缺数；
+- 信号矩阵把事实和分析含义分开，底部链接可以返回 BLS 原始发布。
+
+③ 运行后：访问 `http://localhost:3000/jobs`，就能看到 Jobs Monitor。失业率从 4.3% 降到 4.2% 时，页面不会直接写“就业变强”，因为参与率和劳动力人数也在下降。
+
+### 8.12 `lib/jobs/`
+
+- `types.ts` 规定就业指标、趋势、行业、工资和再平衡信号的数据形状；
+- `data/latest.json` 保存就业报告和 JOLTS 的版本化官方快照；
+- `latest-data.ts` 是页面读取快照的入口；
+- 当前数据是人工核验后随代码保存的快照，还没有像 CPI 一样配置自动更新任务。
+
 ---
 
 ## 9. 构建、Cloudflare 和配置代码
@@ -947,7 +968,7 @@ cpiReport.metrics.map((metric) => (...))
 
 `docs/ARCHITECTURE.md`：给维护者看的边界约定，回答“代码应该放在哪一层、新模块应该怎么分目录”。
 
-`docs/ROADMAP.md`：给产品规划看的路线，说明未来可能增加 FOMC、就业、流动性和事件模块；路线图不是已经完成的功能。
+`docs/ROADMAP.md`：给产品规划看的路线；其中 CPI、FOMC 与就业已经上线，流动性和事件模块仍是未来计划。
 
 `public/favicon.svg`：浏览器标签页旁边的小图标。SVG 是用文字描述形状的矢量图片，可以放大而不模糊。
 
@@ -1068,7 +1089,8 @@ cpiReport.metrics.map((metric) => (...))
 - 第 1～2 行导入断言和测试工具；
 - 第 4～14 行加载 `dist/server/index.js`，制造一个访问首页的假请求，并提供假的静态资源环境；查询参数加入进程和时间，避免模块缓存；
 - 第 16～30 行检查 HTTP 200、HTML 类型、中文语言、标题、CPI 区块、自动更新和 BLS 来源；
-- 第 32～40 行检查 Open Graph、Twitter 大图信息，并确认没有残留模板占位文字。
+- 后续用例分别检查 FOMC、Jobs 页面和它们的关键官方数据；
+- 最后一组检查 Open Graph、Twitter 大图信息，并确认没有残留模板占位文字。
 
 ③ 运行后：它验证的是构建产物，不只是源代码，所以 `npm test` 会先执行 `npm run build`。
 
@@ -1277,6 +1299,8 @@ HOMEBREW_NO_AUTO_UPDATE=1 brew install node@22
 
 - 浏览器标题/分享信息：`app/layout.tsx`；
 - 首屏文案和模块路线图：`app/page.tsx`；
+- FOMC 页面内容：`app/fomc/page.tsx` 和 `lib/fomc/data/latest.json`；
+- Jobs 页面内容：`app/jobs/page.tsx` 和 `lib/jobs/data/latest.json`；
 - 项目快速说明：`README.md`。
 
 ### 14.2 改颜色

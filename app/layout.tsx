@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
   openGraph: {
     title: "星舰猎盘 · CPI Research",
-    description: "CPI Research 与 FOMC Radar：把宏观数据和政策变化转译成可追溯的交易信号。",
+    description: "CPI、FOMC 与就业研究舱：把宏观数据和政策变化转译成可追溯的交易信号。",
     type: "website",
     images: [{ url: "/og.png", width: 1734, height: 907, alt: "星舰猎盘 CPI Research" }],
   },
