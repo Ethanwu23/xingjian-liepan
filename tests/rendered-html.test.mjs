@@ -47,6 +47,14 @@ test("protects the personal favorites API", async () => {
   assert.deepEqual(await response.json(), { error: "Authentication required" });
 });
 
+test("protects the database console outside local development", async () => {
+  const response = await render("/database");
+  assert.equal(response.status, 307);
+  const location = new URL(response.headers.get("location") ?? "", "http://localhost");
+  assert.equal(location.pathname, "/signin-with-chatgpt");
+  assert.equal(location.searchParams.get("return_to"), "/database");
+});
+
 test("ships production metadata without starter preview markers", async () => {
   const response = await render();
   const html = await response.text();

@@ -792,23 +792,25 @@ cpiReport.metrics.map((metric) => (...))
 
 ### 8.4 `app/chatgpt-auth.ts`
 
-当前状态：已由首页和收藏 API 使用。公开浏览不要求登录，只有个人收藏需要登录。
+当前状态：已由首页、收藏 API 和数据后台使用。公开浏览不要求登录，个人收藏和数据后台需要账号。
 
-① 要实现什么：读取平台注入的用户邮箱和姓名，生成安全的登录/退出返回地址。
+① 要实现什么：线上读取平台注入的真实用户邮箱和姓名；本地开发没有真实登录时创建一个模拟账号；同时生成安全的登录/退出返回地址。
 
 ② 代码分组：
 
 - 第 1～2 行导入读取请求头和跳转工具；
-- 第 4～8 行规定用户包含显示名、邮箱、可为空的全名；
+- 用户资料还包含 `isSimulated`，用来给本地假账号显示醒目标记；
 - 第 10～17 行保存请求头名和登录路径，避免到处重复写文字；
-- 第 19～36 行读取用户。没有邮箱就返回 `null`，有编码姓名时安全解码；`??` 表示左边为空时改用右边邮箱；
+- `getChatGPTUser` 优先读取真实登录头；没有真实邮箱时才检查本地开发账号；
+- `getLocalDevelopmentUser` 只有 `NODE_ENV=development` 才返回模拟用户，生产环境始终返回 `null`；
+- `LOCAL_AUTH_NAME` 和 `LOCAL_AUTH_EMAIL` 可以修改测试身份，`LOCAL_AUTH_ENABLED=false` 可以关闭模拟；
 - 第 38～45 行要求必须登录；没有用户就跳转登录页；
 - 第 47～55 行生成登录和退出网址；
 - 第 57～70 行只允许站内相对返回地址，阻止用户被恶意带到外站；
 - 第 72～78 行阻止返回到登录、退出或回调地址造成循环；
 - 第 80～86 行解码姓名，格式损坏时返回 `null` 而不是让页面崩溃。
 
-③ 运行后：首页能显示登录/退出状态，收藏 API 能在服务端确认真实用户邮箱；匿名用户仍可查看所有报告。
+③ 运行后：首页能显示真实或模拟账号；收藏 API 始终在服务端取得邮箱。模拟身份只帮助本地测试，不会进入线上生产环境。
 
 ### 8.5 `app/history-selector.tsx`
 
@@ -824,6 +826,16 @@ cpiReport.metrics.map((metric) => (...))
 - `favorites/route.ts`：GET 读取当前用户收藏，POST 添加收藏，DELETE 删除收藏；
 - 三种收藏操作都会在服务端读取 ChatGPT 用户头，未登录返回 HTTP 401；
 - 月份必须符合 `YYYY-MM`，无效输入返回 HTTP 400。
+
+### 8.8 `app/database/page.tsx`
+
+这是独立的只读数据管理后台，地址是 `/database`：
+
+- 未登录的线上用户会被送到 ChatGPT 登录页；本地开发直接使用模拟账号；
+- 顶部显示 D1 是否连接、历史报告数、当前账号收藏数和全站收藏总数；
+- 历史报告表读取 `cpi_reports`，可以跳回对应月份的研究报告；
+- 收藏表只查询当前邮箱自己的记录；全站只展示数量，不显示其他人的邮箱；
+- 页面没有删除、改写和执行 SQL 的按钮，避免新手误操作正式数据。
 
 ---
 
@@ -902,7 +914,7 @@ cpiReport.metrics.map((metric) => (...))
 
 `.nvmrc`：只有 `22`，让 nvm 知道应使用 Node 22。
 
-`.gitignore`：列出 Git 不应保存的依赖、缓存、密钥、日志和构建产物。尤其 `.env*`、`*.pem` 不应提交，因为可能包含秘密。
+`.gitignore`：列出 Git 不应保存的依赖、缓存、密钥、日志和构建产物。真实 `.env*` 不提交，但无秘密的 `.env.example` 被明确允许提交，方便复制配置。
 
 `package-lock.json`：npm 自动记录每个直接和间接依赖的精确版本及校验值。通常不要手工编辑；运行 `npm install` 后由 npm 更新。
 
@@ -947,7 +959,17 @@ cpiReport.metrics.map((metric) => (...))
 - 数据库类型是 SQLite，因为 D1 兼容 SQLite；
 - `_journal.json` 已记录 `0000_puzzling_freak` 迁移；对应 SQL 会创建两张表和防重复收藏的唯一索引。
 
-### 10.4 `examples/d1/db/schema.ts`
+### 10.4 `lib/cpi/report-store.ts`
+
+这是页面与 D1 之间的“档案管理员”：
+
+- 第一次运行会确认两张表和唯一索引存在；
+- 将仓库里的 `history.json` 同步进 `cpi_reports`；
+- 提供历史报告查询、添加收藏、取消收藏和个人收藏查询；
+- `getDatabaseDashboard` 为管理后台读取报告清单、当前用户收藏和全站收藏数量；
+- 所有邮箱条件都由服务端登录身份提供，浏览器不能冒充另一个邮箱。
+
+### 10.5 `examples/d1/db/schema.ts`
 
 ① 要实现什么：示范如何建立一个笔记表。
 
@@ -962,7 +984,7 @@ cpiReport.metrics.map((metric) => (...))
 
 ③ 当前运行后：它在 `examples/`，不会自动成为正式数据库表。
 
-### 10.5 `examples/d1/app/api/notes/route.ts`
+### 10.6 `examples/d1/app/api/notes/route.ts`
 
 这是一个“笔记 API”示例：
 
@@ -994,7 +1016,11 @@ cpiReport.metrics.map((metric) => (...))
 
 ③ 运行后：五项通过显示五个勾；任何公式被改坏就失败。
 
-### 11.2 `tests/python/test_cpi_updater.py`
+### 11.2 `tests/local-auth.test.ts`
+
+用三个小测试证明：开发环境能按配置生成模拟账号、生产环境绝不生成模拟账号、开发者也可以主动关闭模拟功能。
+
+### 11.3 `tests/python/test_cpi_updater.py`
 
 ① 要实现什么：不访问真实互联网，也能验证快照生成和更新逻辑。
 
@@ -1010,7 +1036,7 @@ cpiReport.metrics.map((metric) => (...))
 
 ③ 运行后：测试不会消耗 BLS API 次数，也不会改正式 JSON。
 
-### 11.3 `tests/rendered-html.test.mjs`
+### 11.4 `tests/rendered-html.test.mjs`
 
 ① 要实现什么：构建完成后直接调用 Worker，确认生产网页真的能返回关键内容和分享信息。
 

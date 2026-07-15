@@ -1,11 +1,9 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { getLocalDevelopmentUser, type AppUser } from "../lib/auth/local-user";
 
-export type ChatGPTUser = {
-  displayName: string;
-  email: string;
-  fullName: string | null;
-};
+export type ChatGPTUser = AppUser;
+export { getLocalDevelopmentUser };
 
 const USER_EMAIL_HEADER = "oai-authenticated-user-email";
 const USER_FULL_NAME_HEADER = "oai-authenticated-user-full-name";
@@ -19,7 +17,7 @@ const CALLBACK_PATH = "/callback";
 export async function getChatGPTUser(): Promise<ChatGPTUser | null> {
   const requestHeaders = await headers();
   const email = requestHeaders.get(USER_EMAIL_HEADER);
-  if (!email) return null;
+  if (!email) return getLocalDevelopmentUser(process.env, import.meta.env.DEV);
 
   const encodedFullName = requestHeaders.get(USER_FULL_NAME_HEADER);
   const fullName =
@@ -32,6 +30,7 @@ export async function getChatGPTUser(): Promise<ChatGPTUser | null> {
     displayName: fullName ?? email,
     email,
     fullName,
+    isSimulated: false,
   };
 }
 

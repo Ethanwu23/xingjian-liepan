@@ -50,7 +50,12 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ m
           <a href="#roadmap">模块航图</a>
           <span className="status"><i /> BLS 数据已同步</span>
           {user ? (
-            <span className="account">{user.displayName}<a href={chatGPTSignOutPath(returnTo)}>退出</a></span>
+            <span className="account">
+              {user.isSimulated ? <b className="local-account-badge">本地模拟</b> : null}
+              {user.displayName}
+              <a href="/database">数据后台</a>
+              {!user.isSimulated ? <a href={chatGPTSignOutPath(returnTo)}>退出</a> : null}
+            </span>
           ) : (
             <a className="account-link" href={signInPath}>登录收藏</a>
           )}

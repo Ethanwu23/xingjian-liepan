@@ -6,6 +6,22 @@ type HistoryResult = {
   storageAvailable: boolean;
 };
 
+export type DatabaseDashboard = {
+  reports: Array<{
+    month: string;
+    title: string;
+    source: string;
+    updatedAt: string;
+    createdAt: string;
+  }>;
+  favorites: Array<{
+    month: string;
+    title: string;
+    createdAt: string;
+  }>;
+  totalFavorites: number;
+};
+
 let initialized = false;
 
 async function ensureStorage(db: D1Database) {
@@ -114,4 +130,45 @@ export async function removeFavorite(email: string, month: string) {
     .prepare("DELETE FROM user_favorites WHERE user_email = ? AND report_month = ?")
     .bind(email, month)
     .run();
+}
+
+export async function getDatabaseDashboard(email: string): Promise<DatabaseDashboard> {
+  const db = await getD1();
+  await syncBundledReports(db);
+  const [reportRows, favoriteRows, favoriteCount] = await Promise.all([
+    db.prepare(`SELECT month, report_json, source, updated_at, created_at
+      FROM cpi_reports ORDER BY month DESC`).all<{
+        month: string;
+        report_json: string;
+        source: string;
+        updated_at: string;
+        created_at: string;
+      }>(),
+    db.prepare(`SELECT reports.month, reports.report_json, favorites.created_at
+      FROM user_favorites favorites
+      JOIN cpi_reports reports ON reports.month = favorites.report_month
+      WHERE favorites.user_email = ?
+      ORDER BY favorites.created_at DESC`).bind(email).all<{
+        month: string;
+        report_json: string;
+        created_at: string;
+      }>(),
+    db.prepare("SELECT COUNT(*) AS count FROM user_favorites").first<{ count: number }>(),
+  ]);
+
+  return {
+    reports: reportRows.results.map((row) => ({
+      month: row.month,
+      title: parseSnapshot(row.report_json)?.report.headline ?? "报告内容无法解析",
+      source: row.source,
+      updatedAt: row.updated_at,
+      createdAt: row.created_at,
+    })),
+    favorites: favoriteRows.results.map((row) => ({
+      month: row.month,
+      title: parseSnapshot(row.report_json)?.report.headline ?? "报告内容无法解析",
+      createdAt: row.created_at,
+    })),
+    totalFavorites: Number(favoriteCount?.count ?? 0),
+  };
 }
