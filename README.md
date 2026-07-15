@@ -12,6 +12,15 @@
 
 ## 本地运行
 
+需要 Node.js `>=22.13.0`。使用 nvm 时可在项目目录执行：
+
+```bash
+nvm install
+nvm use
+```
+
+使用 Homebrew 安装的 `node@22` 时，请确保 `/opt/homebrew/opt/node@22/bin` 位于 `PATH` 前部。
+
 ```bash
 npm install
 npm run dev
