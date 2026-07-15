@@ -1,0 +1,62 @@
+{
+  "meetingDate": "2026-06-17",
+  "meetingLabel": "2026年6月 FOMC",
+  "updatedAt": "2026-06-17T18:00:00Z",
+  "statementUrl": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617a.htm",
+  "projectionUrl": "https://www.federalreserve.gov/monetarypolicy/fomcprojtabl20260617.htm",
+  "previousStatementUrl": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260429a.htm",
+  "targetRange": { "lower": 3.5, "upper": 3.75 },
+  "decision": "维持利率不变",
+  "headline": "通胀冲击抬高利率路径，委员会转向更明确的价格稳定表述",
+  "summary": "6月会议维持联邦基金利率目标区间不变，但SEP中2026—2028年利率中值全面高于3月预测。声明删除了明确的“进一步调整”措辞，强调供给冲击与“实现价格稳定”，同时12票全票通过，显示委员会在更高利率维持更久的路径上重新凝聚共识。",
+  "vote": { "for": 12, "against": 0 },
+  "ratePath": [
+    { "period": "当前中点", "current": 3.625, "previous": 3.625 },
+    { "period": "2026", "current": 3.8, "previous": 3.4 },
+    { "period": "2027", "current": 3.6, "previous": 3.1 },
+    { "period": "2028", "current": 3.4, "previous": 3.1 },
+    { "period": "长期", "current": 3.1, "previous": 3.1 }
+  ],
+  "dots": [
+    { "period": "2026", "values": [{ "rate": 4.375, "count": 1 }, { "rate": 4.125, "count": 5 }, { "rate": 3.875, "count": 3 }, { "rate": 3.625, "count": 8 }, { "rate": 3.375, "count": 1 }] },
+    { "period": "2027", "values": [{ "rate": 4.375, "count": 1 }, { "rate": 4.125, "count": 2 }, { "rate": 3.875, "count": 5 }, { "rate": 3.625, "count": 2 }, { "rate": 3.375, "count": 3 }, { "rate": 3.125, "count": 4 }, { "rate": 2.875, "count": 1 }] },
+    { "period": "2028", "values": [{ "rate": 3.875, "count": 3 }, { "rate": 3.625, "count": 5 }, { "rate": 3.375, "count": 2 }, { "rate": 3.125, "count": 6 }, { "rate": 2.875, "count": 1 }] },
+    { "period": "长期", "values": [{ "rate": 3.875, "count": 1 }, { "rate": 3.75, "count": 1 }, { "rate": 3.625, "count": 1 }, { "rate": 3.5, "count": 1 }, { "rate": 3.375, "count": 2 }, { "rate": 3.25, "count": 1 }, { "rate": 3.125, "count": 2 }, { "rate": 3.0, "count": 7 }, { "rate": 2.875, "count": 2 }] }
+  ],
+  "languageChanges": [
+    {
+      "topic": "政策指引",
+      "previous": "将评估进一步调整目标区间的幅度和时机。",
+      "current": "维持目标区间，并重申银行体系保持充足准备金的政策。",
+      "interpretation": "删除明确的进一步调整与宽松倾向，政策指引回到更中性的观察状态。",
+      "tone": "hawkish"
+    },
+    {
+      "topic": "通胀判断",
+      "previous": "通胀处于高位，部分反映全球能源价格近期上涨。",
+      "current": "通胀仍高于2%目标，部分反映包括能源在内的行业供给冲击。委员会将实现价格稳定。",
+      "interpretation": "从描述能源价格转向更广泛的供给冲击，并增加强硬的价格稳定承诺。",
+      "tone": "hawkish"
+    },
+    {
+      "topic": "增长与就业",
+      "previous": "经济稳健扩张；平均新增就业保持低位。",
+      "current": "经济在高不确定性下稳健扩张；生产率和资本投资强劲，就业增长与劳动力增长保持一致。",
+      "interpretation": "增长韧性与供给侧改善被更明确肯定，短期降息紧迫性下降。",
+      "tone": "hawkish"
+    },
+    {
+      "topic": "委员会共识",
+      "previous": "8票支持、4票反对；反对意见涉及降息和声明中的宽松倾向。",
+      "current": "12票一致通过维持利率不变。",
+      "interpretation": "分歧暂时收敛，新的政策表述获得完整共识。",
+      "tone": "neutral"
+    }
+  ],
+  "macro": [
+    { "label": "2026 GDP", "value": 2.2, "previous": 2.4, "unit": "%" },
+    { "label": "2026 失业率", "value": 4.3, "previous": 4.4, "unit": "%" },
+    { "label": "2026 PCE", "value": 3.6, "previous": 2.7, "unit": "%" },
+    { "label": "2026 核心PCE", "value": 3.3, "previous": 2.7, "unit": "%" }
+  ]
+}

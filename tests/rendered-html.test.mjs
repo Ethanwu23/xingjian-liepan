@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 async function render(path = "/") {
@@ -53,6 +54,34 @@ test("protects the database console outside local development", async () => {
   const location = new URL(response.headers.get("location") ?? "", "http://localhost");
   assert.equal(location.pathname, "/signin-with-chatgpt");
   assert.equal(location.searchParams.get("return_to"), "/database");
+});
+
+test("server-renders the FOMC Radar module", async () => {
+  const response = await render("/fomc");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+
+  assert.match(html, /MISSION 02 · FOMC RADAR/);
+  assert.match(html, /利率路径雷达/);
+  assert.match(html, /SEP 利率中值路径/);
+  assert.match(html, /点阵图分布/);
+  assert.match(html, /政策语言变化/);
+  assert.match(html, /CURRENT TARGET RANGE/);
+  assert.match(html, /3\.50/);
+  assert.match(html, /3\.75/);
+  assert.match(html, /2026年6月 FOMC/);
+  assert.match(html, /federalreserve\.gov/);
+});
+
+test("keeps the official June dot-plot participant counts", async () => {
+  const dataUrl = new URL("../lib/fomc/data/latest.json", import.meta.url);
+  const snapshot = JSON.parse(await readFile(dataUrl, "utf8"));
+  const totals = snapshot.dots.map((column) =>
+    column.values.reduce((sum, value) => sum + value.count, 0),
+  );
+
+  assert.deepEqual(totals, [18, 18, 17, 18]);
+  assert.deepEqual(snapshot.vote, { for: 12, against: 0 });
 });
 
 test("ships production metadata without starter preview markers", async () => {

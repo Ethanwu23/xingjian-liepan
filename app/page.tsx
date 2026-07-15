@@ -47,6 +47,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ m
         </a>
         <nav aria-label="主导航">
           <a className="active" href="#report">CPI 研究舱</a>
+          <a href="/fomc">FOMC Radar</a>
           <a href="#roadmap">模块航图</a>
           <span className="status"><i /> BLS 数据已同步</span>
           {user ? (
@@ -244,8 +245,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ m
           <p>统一数据协议，每个研究舱独立演进。</p>
         </div>
         <div className="module-grid">
-          <article className="module-card current"><span>01 · ONLINE</span><h3>CPI Research</h3><p>通胀分项、趋势判断、跨资产影响</p><b>当前建设中 →</b></article>
-          <article className="module-card"><span>02 · PLANNED</span><h3>FOMC Radar</h3><p>利率路径、点阵图与政策语言变化</p></article>
+          <article className="module-card current"><span>01 · ONLINE</span><h3>CPI Research</h3><p>通胀分项、趋势判断、跨资产影响</p><b>进入研究舱 →</b></article>
+          <a className="module-card current" href="/fomc"><span>02 · ONLINE</span><h3>FOMC Radar</h3><p>利率路径、点阵图与政策语言变化</p><b>进入雷达舱 →</b></a>
           <article className="module-card"><span>03 · PLANNED</span><h3>Jobs Monitor</h3><p>非农、失业率、工资与劳动力再平衡</p></article>
           <article className="module-card"><span>04 · PLANNED</span><h3>Liquidity Map</h3><p>美元流动性、财政账户与风险偏好</p></article>
         </div>
