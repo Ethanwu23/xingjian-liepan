@@ -38,6 +38,7 @@ export default function JobsMonitorPage() {
           <Link href="/">CPI Research</Link>
           <Link href="/fomc">FOMC Radar</Link>
           <Link className="active" href="/jobs">Jobs Monitor</Link>
+          <Link href="/liquidity">Liquidity Map</Link>
           <a href="#balance">劳动力再平衡</a>
           <span className="status"><i /> BLS 就业数据已同步</span>
         </nav>

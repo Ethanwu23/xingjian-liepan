@@ -39,6 +39,7 @@ export default function FomcRadarPage() {
           <Link href="/">CPI Research</Link>
           <Link className="active" href="/fomc">FOMC Radar</Link>
           <Link href="/jobs">Jobs Monitor</Link>
+          <Link href="/liquidity">Liquidity Map</Link>
           <a href="#language">政策语言</a>
           <span className="status"><i /> FED 数据已同步</span>
         </nav>

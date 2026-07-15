@@ -660,7 +660,7 @@ JSON 是纯数据，不是执行命令。
 
 ## 8. 网页代码逐份解析
 
-除了首页 CPI Research，项目现在还有 `/fomc` 和 `/jobs` 两座研究舱。三个页面共用品牌、颜色变量和页脚原则，但各自读取独立数据文件，互不混在一起。
+除了首页 CPI Research，项目现在还有 `/fomc`、`/jobs` 和 `/liquidity` 三座研究舱。四个页面共用品牌、颜色变量和页脚原则，但各自读取独立数据文件，互不混在一起。
 
 ### 8.1 `app/layout.tsx`
 
@@ -881,6 +881,27 @@ cpiReport.metrics.map((metric) => (...))
 - `latest-data.ts` 是页面读取快照的入口；
 - 当前数据是人工核验后随代码保存的快照，还没有像 CPI 一样配置自动更新任务。
 
+### 8.13 `app/liquidity/page.tsx`
+
+① 要实现什么：把美元市场想成几个连通的水池，展示中央银行放了多少水、财政部和货币基金暂时存走了多少水，以及市场现在愿不愿意承担风险。
+
+② 页面分区：
+
+- “净流动性传导图”从美联储总资产中减去 TGA 和 ON RRP，得到研究代理值；
+- “美联储资产负债表”展示持有证券、国债、MBS 和银行准备金；
+- “财政账户雷达”展示 TGA 当前余额以及一周、一年变化；
+- “风险偏好与金融条件”展示 NFCI 综合、风险、信用和杠杆分项；
+- 信号矩阵把官方事实、资金传导和可能影响分开书写。
+
+③ 运行后：访问 `http://localhost:3000/liquidity`，就能看到 Liquidity Map。页面会明确说明净流动性代理值不是美联储官方统计，也不能单独预测涨跌。
+
+### 8.14 `lib/liquidity/`
+
+- `types.ts` 规定流动性指标、资金传导、财政账户和风险信号的数据格式；
+- `data/latest.json` 保存经过人工核验的 H.4.1、ON RRP 和 NFCI 快照；
+- `latest-data.ts` 是页面读取快照的统一入口；
+- 当前版本尚未配置自动更新，更新数据时要同时核对三种不同发布日期。
+
 ---
 
 ## 9. 构建、Cloudflare 和配置代码
@@ -968,11 +989,11 @@ cpiReport.metrics.map((metric) => (...))
 
 `docs/ARCHITECTURE.md`：给维护者看的边界约定，回答“代码应该放在哪一层、新模块应该怎么分目录”。
 
-`docs/ROADMAP.md`：给产品规划看的路线；其中 CPI、FOMC 与就业已经上线，流动性和事件模块仍是未来计划。
+`docs/ROADMAP.md`：给产品规划看的路线；其中 CPI、FOMC、就业与流动性已经上线，事件模块仍是未来计划。
 
 `public/favicon.svg`：浏览器标签页旁边的小图标。SVG 是用文字描述形状的矢量图片，可以放大而不模糊。
 
-`public/og.png`：链接分享到社交平台时使用的大图，由 `layout.tsx` 的 Open Graph 配置引用。PNG 是二进制图片，不能像代码一样逐行解释。
+`public/og-liquidity.png`：当前链接分享到社交平台时使用的大图，由 `layout.tsx` 引用，概括四座已上线研究舱。PNG 是二进制图片，不能像代码一样逐行解释。
 
 `public/file.svg`、`public/globe.svg`、`public/window.svg`：脚手架附带的矢量图，当前首页没有引用。删除前应先搜索是否被其他页面使用。
 
@@ -1301,6 +1322,7 @@ HOMEBREW_NO_AUTO_UPDATE=1 brew install node@22
 - 首屏文案和模块路线图：`app/page.tsx`；
 - FOMC 页面内容：`app/fomc/page.tsx` 和 `lib/fomc/data/latest.json`；
 - Jobs 页面内容：`app/jobs/page.tsx` 和 `lib/jobs/data/latest.json`；
+- Liquidity 页面内容：`app/liquidity/page.tsx` 和 `lib/liquidity/data/latest.json`；
 - 项目快速说明：`README.md`。
 
 ### 14.2 改颜色

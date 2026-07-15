@@ -1,0 +1,48 @@
+{
+  "reportDate": "2026年7月",
+  "updatedAt": "2026-07-14T18:00:00Z",
+  "headline": "财政账户回落短期释放美元流动性，但风险偏好已处于偏宽松区间",
+  "summary": "截至7月8日，美联储总资产为6.736万亿美元、银行准备金为3.137万亿美元。TGA一周减少581亿美元，为市场释放现金；7月14日ON RRP仅剩2.78亿美元，缓冲池已接近耗尽。星舰猎盘净流动性代理值约5.986万亿美元。NFCI为-0.515，说明整体金融条件仍比历史平均宽松，但信用分项接近中性，后续更需要关注财政账户重新补充带来的抽水压力。",
+  "sources": [
+    { "label": "Federal Reserve H.4.1 · 7月9日", "url": "https://www.federalreserve.gov/releases/h41/20260709/h41.pdf" },
+    { "label": "New York Fed ON RRP · FRED", "url": "https://fred.stlouisfed.org/series/RRPONTSYD" },
+    { "label": "Chicago Fed NFCI · FRED", "url": "https://fred.stlouisfed.org/series/NFCI" }
+  ],
+  "metrics": [
+    { "label": "净流动性代理", "value": 5.986, "unit": "T", "change": 0.069, "note": "Fed资产 − TGA − ON RRP", "tone": "supportive" },
+    { "label": "美联储总资产", "value": 6.736, "unit": "T", "change": 0.011, "note": "7月8日周三水平", "tone": "neutral" },
+    { "label": "银行准备金", "value": 3.137, "unit": "T", "change": 0.060, "note": "一周增加604亿美元", "tone": "supportive" },
+    { "label": "财政部 TGA", "value": 749.2, "unit": "B", "change": -58.1, "note": "下降通常向市场放水", "tone": "supportive" },
+    { "label": "ON RRP", "value": 0.278, "unit": "B", "note": "7月14日日度操作", "tone": "watch" }
+  ],
+  "flow": [
+    { "label": "美联储总资产", "value": 6.736, "unit": "T", "operator": "base", "note": "流动性资产底盘" },
+    { "label": "财政部 TGA", "value": 749.2, "unit": "B", "operator": "subtract", "note": "政府在美联储的现金" },
+    { "label": "ON RRP", "value": 0.278, "unit": "B", "operator": "subtract", "note": "货币基金停泊资金" },
+    { "label": "净流动性代理", "value": 5.986, "unit": "T", "operator": "result", "note": "研究用途，非官方统计" }
+  ],
+  "balanceSheet": [
+    { "label": "持有证券", "value": 6.453, "unit": "T", "share": 95.8, "note": "国债、机构债和MBS" },
+    { "label": "美国国债", "value": 4.503, "unit": "T", "share": 66.9, "note": "总资产中的主要部分" },
+    { "label": "抵押贷款支持证券", "value": 1.948, "unit": "T", "share": 28.9, "note": "MBS 持仓" },
+    { "label": "银行准备金", "value": 3.137, "unit": "T", "share": 46.6, "note": "银行体系的央行货币" }
+  ],
+  "treasury": [
+    { "label": "TGA 当前余额", "value": 749.2, "unit": "B", "note": "7月8日周三水平", "tone": "neutral" },
+    { "label": "一周变化", "value": -58.1, "unit": "B", "change": -58.1, "note": "账户回落，短期释放现金", "tone": "supportive" },
+    { "label": "较一年前变化", "value": 438.2, "unit": "B", "change": 438.2, "note": "财政现金垫显著高于去年", "tone": "watch" },
+    { "label": "前一周余额", "value": 807.4, "unit": "B", "note": "由H.4.1周变化反推", "tone": "neutral" }
+  ],
+  "riskAppetite": [
+    { "label": "NFCI 综合", "value": -0.515, "previous": -0.505, "interpretation": "低于零代表金融条件比历史平均更宽松", "tone": "supportive" },
+    { "label": "风险分项", "value": -0.594, "previous": -0.592, "interpretation": "波动与融资风险仍处偏宽松区域", "tone": "supportive" },
+    { "label": "信用分项", "value": -0.034, "previous": -0.030, "interpretation": "接近零，信用条件大致中性", "tone": "neutral" },
+    { "label": "杠杆分项", "value": 0.404, "previous": 0.421, "interpretation": "仍高于平均，但紧缩程度有所缓和", "tone": "watch" }
+  ],
+  "signals": [
+    { "title": "财政现金短期释放", "evidence": "TGA一周减少581亿美元，是本周净流动性改善的主要来源。", "implication": "短期支持市场现金，但方向可能随财政补库迅速反转。", "tone": "supportive" },
+    { "title": "准备金回升", "evidence": "银行准备金一周增加604亿美元至3.137万亿美元。", "implication": "银行体系流动性缓冲暂未显示明显压力。", "tone": "supportive" },
+    { "title": "ON RRP缓冲接近耗尽", "evidence": "7月14日ON RRP仅2.78亿美元，已接近零。", "implication": "未来TGA补充更可能直接影响银行准备金，而非先吸收RRP。", "tone": "watch" },
+    { "title": "风险偏好仍偏宽松", "evidence": "NFCI为-0.515、风险分项为-0.594，但信用分项仅-0.034。", "implication": "市场尚未进入压力状态，但继续放松的空间不宜线性外推。", "tone": "neutral" }
+  ]
+}

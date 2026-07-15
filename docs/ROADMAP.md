@@ -15,7 +15,7 @@
 - M1 `cpi-research`：CPI 分项、趋势信号、跨资产路径。
 - M2 `fomc-radar`：利率路径、点阵图、声明和发布会语言变化。
 - M3 `jobs-monitor`：非农、失业率、工资与劳动参与率。
-- M4 `liquidity-map`：TGA、逆回购、美元流动性与金融条件。
+- M4 `liquidity-map`：已上线 TGA、逆回购、美元流动性与金融条件。
 - M5 `event-console`：宏观日历、预期差、历史事件复盘。
 
 ## CPI Research 里程碑
@@ -27,4 +27,5 @@
 - v0.5：已完成本地模拟账号和登录后只读 D1 数据管理后台。
 - v0.6：已上线 FOMC Radar，包含 SEP 利率路径、点阵图分布和政策语言变化。
 - v0.7：已上线 Jobs Monitor，包含非农、失业与劳动供给、工资压力和劳动力供需再平衡。
+- v0.8：已上线 Liquidity Map，包含美联储资产负债表、TGA、ON RRP、净流动性代理和 NFCI 风险偏好。
 - v1.0：自动更新、人工审核、报告归档和异常告警。

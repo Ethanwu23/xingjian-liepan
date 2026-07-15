@@ -115,12 +115,39 @@ test("keeps the official Jobs Monitor snapshot values", async () => {
   );
 });
 
+test("server-renders the Liquidity Map module", async () => {
+  const response = await render("/liquidity");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+
+  assert.match(html, /MISSION 04 · LIQUIDITY MAP/);
+  assert.match(html, /美元流动性总览/);
+  assert.match(html, /净流动性传导图/);
+  assert.match(html, /财政账户雷达/);
+  assert.match(html, /风险偏好与金融条件/);
+  assert.match(html, /5\.986/);
+  assert.match(html, /federalreserve\.gov/);
+});
+
+test("keeps the official Liquidity Map snapshot and proxy calculation", async () => {
+  const dataUrl = new URL("../lib/liquidity/data/latest.json", import.meta.url);
+  const snapshot = JSON.parse(await readFile(dataUrl, "utf8"));
+  const [fed, tga, rrp, proxy] = snapshot.flow;
+  const calculated = fed.value - tga.value / 1000 - rrp.value / 1000;
+
+  assert.ok(Math.abs(calculated - proxy.value) < 0.001);
+  assert.equal(snapshot.metrics.find(({ label }) => label === "银行准备金").value, 3.137);
+  assert.equal(snapshot.metrics.find(({ label }) => label === "财政部 TGA").value, 749.2);
+  assert.equal(snapshot.riskAppetite.find(({ label }) => label === "NFCI 综合").value, -0.515);
+  assert.equal(snapshot.riskAppetite.find(({ label }) => label === "风险分项").value, -0.594);
+});
+
 test("ships production metadata without starter preview markers", async () => {
   const response = await render();
   const html = await response.text();
 
   assert.match(html, /property="og:title" content="星舰猎盘 · CPI Research"/);
-  assert.match(html, /property="og:image" content="\/og.png"/);
+  assert.match(html, /property="og:image" content="\/og-liquidity.png"/);
   assert.match(html, /name="twitter:card" content="summary_large_image"/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/);
 });

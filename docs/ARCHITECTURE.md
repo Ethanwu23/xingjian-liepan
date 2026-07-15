@@ -3,7 +3,7 @@
 ## 1. 当前定位
 
 星舰猎盘是模块化宏观交易研究平台，当前仓库以单个 Next/Vinext 应用承载平台外壳和研究模块。
-`cpi-research` 是第一个业务模块，通过 Python 定时任务同步 BLS 官方数据；`fomc-radar` 是第二个业务模块，展示美联储声明和 SEP；`jobs-monitor` 是第三个业务模块，联合展示就业报告与 JOLTS 劳动力供需数据。
+`cpi-research` 是第一个业务模块，通过 Python 定时任务同步 BLS 官方数据；`fomc-radar` 是第二个业务模块，展示美联储声明和 SEP；`jobs-monitor` 是第三个业务模块，联合展示就业报告与 JOLTS；`liquidity-map` 是第四个业务模块，连接央行资产负债表、财政现金与金融条件。
 
 ## 2. 目录边界
 
@@ -18,7 +18,8 @@
 │       ├── report-store.ts# D1 历史报告与收藏存储
 │       └── types.ts      # CPI 报告领域类型
 │   ├── fomc/             # FOMC 类型、官方快照与数据入口
-│   └── jobs/             # 就业类型、BLS 快照与数据入口
+│   ├── jobs/             # 就业类型、BLS 快照与数据入口
+│   └── liquidity/        # 流动性类型、联储快照与数据入口
 ├── python/cpi_research/  # BLS 客户端、计算与快照生成
 ├── scripts/              # 数据更新命令入口
 ├── .github/workflows/    # 定时更新任务
@@ -82,7 +83,21 @@ BLS Employment Situation + JOLTS
 
 就业页把两份官方发布整理成同一张分析图，但保留各自报告月份。失业率下降必须与劳动参与率、劳动力人数和就业人口比一起判断，不能自动解释为就业市场变强。
 
-## 6. 后续模块约定
+## 6. Liquidity Map 的调用链
+
+```text
+Fed H.4.1 + NY Fed ON RRP + Chicago Fed NFCI
+                         │
+                         └─> lib/liquidity/data/latest.json
+                                            │
+                                            ├─> 净流动性代理与资产负债表
+                                            ├─> TGA 财政账户雷达
+                                            └─> app/liquidity/page.tsx 风险偏好
+```
+
+净流动性代理是本项目的分析公式，不是美联储官方指标。页面和文档必须保留这一说明，不能把单一代理值描述为资产价格预测。
+
+## 7. 后续模块约定
 
 新研究舱优先沿用以下边界：
 
@@ -97,7 +112,7 @@ tests/<module>-*.test.ts    模块测试
 当页面复杂度增长后，再将 `app/page.tsx` 中的 CPI 展示组件迁入 `app/modules/cpi/`；在此之前保留单页面结构，避免过早拆分。
 平台级能力（数据库连接、任务调度、报告渲染、版本追踪）不得放入某个研究模块目录。
 
-## 7. 提交与验证
+## 8. 提交与验证
 
 提交前至少运行：
 
