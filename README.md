@@ -28,6 +28,20 @@ npm run build
 
 详细路线见 `docs/ROADMAP.md`。
 
+项目目录、模块边界和新增研究舱的约定见 `docs/ARCHITECTURE.md`。
+
+## 目录速览
+
+```text
+app/          页面、布局与全局样式
+lib/cpi/      cpi-research 的类型、计算与演示数据
+tests/        计算单元测试与构建产物验收测试
+db/           平台数据库连接与共享 schema
+worker/       Cloudflare Worker 运行入口
+docs/         架构说明与产品路线图
+examples/     独立示例，不属于产品运行主链路
+```
+
 ## 数据原则
 
 - Python/TypeScript 计算事实，LLM 不负责计算数值。
