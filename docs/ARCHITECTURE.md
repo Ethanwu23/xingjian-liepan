@@ -15,6 +15,7 @@
 │       ├── calculator.ts # 确定性指标计算
 │       ├── data/         # 版本化 BLS 数据快照
 │       ├── latest-data.ts# 前端数据适配
+│       ├── report-store.ts# D1 历史报告与收藏存储
 │       └── types.ts      # CPI 报告领域类型
 ├── python/cpi_research/  # BLS 客户端、计算与快照生成
 ├── scripts/              # 数据更新命令入口
@@ -40,15 +41,16 @@
 ## 3. CPI Research 的调用链
 
 ```text
-BLS API ─> python/cpi_research ─> lib/cpi/data/latest.json
-                                      │
-lib/cpi/types.ts ─────────────────────┼─> app/page.tsx ─> Vinext ─> worker/index.ts
+BLS API ─> python/cpi_research ─> latest.json + history.json ─> D1 历史报告
+                                                 │                 │
+lib/cpi/types.ts ────────────────────────────────┼─> app/page.tsx ─┼─> worker/index.ts
 lib/cpi/calculator.ts ─> TS 单元测试  └─> Python 快照测试
                                               dist 输出 ─> HTML 验收测试
 ```
 
 计算函数保持无副作用，由测试锁定公式；页面只消费结构化结果，不承担宏观指标计算。
 Python 更新器只在数据发生变化时原子替换 JSON，避免定时任务产生无意义提交。环比使用季调序列，同比使用未季调序列。
+公开页面按 `month` 查询参数选择历史报告；D1 不可用时退回版本化文件。收藏 API 必须在服务端读取 ChatGPT 用户身份，不能信任浏览器提交的邮箱。
 
 ## 4. 后续模块约定
 

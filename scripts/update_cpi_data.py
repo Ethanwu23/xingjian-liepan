@@ -22,10 +22,20 @@ def main() -> int:
         default=ROOT / "lib" / "cpi" / "data" / "latest.json",
         help="snapshot output path",
     )
+    parser.add_argument(
+        "--history-output",
+        type=Path,
+        default=ROOT / "lib" / "cpi" / "data" / "history.json",
+        help="historical snapshots output path",
+    )
     args = parser.parse_args()
 
     try:
-        changed = update_snapshot(args.output, registration_key=os.getenv("BLS_API_KEY"))
+        changed = update_snapshot(
+            args.output,
+            registration_key=os.getenv("BLS_API_KEY"),
+            history_output=args.history_output,
+        )
     except BlsDataError as error:
         print(f"CPI update failed: {error}", file=sys.stderr)
         return 1

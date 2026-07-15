@@ -35,12 +35,12 @@ jobs:
 
       - name: Commit changed snapshot
         run: |
-          if git diff --quiet -- lib/cpi/data/latest.json; then
+          if git diff --quiet -- lib/cpi/data; then
             echo "No CPI data change"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add lib/cpi/data/latest.json
+          git add lib/cpi/data/latest.json lib/cpi/data/history.json
           git commit -m "data: update CPI snapshot"
           git push

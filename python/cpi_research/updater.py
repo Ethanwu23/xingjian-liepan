@@ -258,28 +258,53 @@ def _comparable(snapshot: dict[str, Any]) -> dict[str, Any]:
     return {key: value for key, value in snapshot.items() if key != "updatedAt"}
 
 
+def _write_json(output: Path, value: Any) -> None:
+    output.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.NamedTemporaryFile("w", encoding="utf-8", dir=output.parent, delete=False) as handle:
+        json.dump(value, handle, ensure_ascii=False, indent=2)
+        handle.write("\n")
+        temporary = Path(handle.name)
+    os.replace(temporary, output)
+
+
 def update_snapshot(
     output: Path,
     registration_key: str | None = None,
     now: datetime | None = None,
+    history_output: Path | None = None,
 ) -> bool:
-    """Fetch and atomically update the snapshot. Return True only on data changes."""
+    """Fetch and atomically update latest and historical snapshots."""
     now = now or datetime.now(timezone.utc)
+    history_output = history_output or output.with_name("history.json")
     series = fetch_bls_series(now.year - 2, now.year, registration_key=registration_key)
     snapshot = build_snapshot(series, generated_at=now)
 
+    current: dict[str, Any] | None = None
     if output.exists():
         try:
             current = json.loads(output.read_text(encoding="utf-8"))
         except json.JSONDecodeError as error:
             raise BlsDataError(f"Existing snapshot is invalid JSON: {output}") from error
-        if _comparable(current) == _comparable(snapshot):
-            return False
+    latest_changed = current is None or _comparable(current) != _comparable(snapshot)
+    effective_snapshot = snapshot if latest_changed else current
 
-    output.parent.mkdir(parents=True, exist_ok=True)
-    with tempfile.NamedTemporaryFile("w", encoding="utf-8", dir=output.parent, delete=False) as handle:
-        json.dump(snapshot, handle, ensure_ascii=False, indent=2)
-        handle.write("\n")
-        temporary = Path(handle.name)
-    os.replace(temporary, output)
-    return True
+    history: list[dict[str, Any]] = []
+    if history_output.exists():
+        try:
+            stored_history = json.loads(history_output.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as error:
+            raise BlsDataError(f"Existing history is invalid JSON: {history_output}") from error
+        if not isinstance(stored_history, list):
+            raise BlsDataError(f"Existing history must be a JSON list: {history_output}")
+        history = stored_history
+
+    next_history = [item for item in history if item.get("releaseMonth") != effective_snapshot["releaseMonth"]]
+    next_history.append(effective_snapshot)
+    next_history.sort(key=lambda item: item["releaseMonth"], reverse=True)
+    history_changed = history != next_history
+
+    if latest_changed:
+        _write_json(output, snapshot)
+    if history_changed:
+        _write_json(history_output, next_history)
+    return latest_changed or history_changed

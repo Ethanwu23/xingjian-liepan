@@ -1,4 +1,9 @@
-import { cpiDataMetadata, cpiReport } from "../lib/cpi/latest-data";
+import { chatGPTSignInPath, chatGPTSignOutPath, getChatGPTUser } from "./chatgpt-auth";
+import { FavoriteButton } from "./favorite-button";
+import { HistorySelector } from "./history-selector";
+import { getHistoricalReports, getUserFavorites } from "../lib/cpi/report-store";
+
+export const dynamic = "force-dynamic";
 
 function formatPercent(value: number) {
   const sign = value > 0 ? "+" : value < 0 ? "−" : "";
@@ -9,9 +14,27 @@ function tone(value: number) {
   return value > 0 ? "hot" : value < 0 ? "cool" : "flat";
 }
 
-const maxBar = Math.max(...cpiReport.components.map((item) => Math.abs(item.mom)));
+export default async function Home({ searchParams }: { searchParams: Promise<{ month?: string }> }) {
+  const requestedMonth = (await searchParams).month;
+  const history = await getHistoricalReports();
+  const selectedSnapshot =
+    history.reports.find((item) => item.releaseMonth === requestedMonth) ?? history.reports[0];
+  const cpiReport = selectedSnapshot.report;
+  const maxBar = Math.max(...cpiReport.components.map((item) => Math.abs(item.mom)));
+  const user = await getChatGPTUser();
+  let favorites = [] as typeof history.reports;
+  let storageAvailable = history.storageAvailable;
+  if (user && storageAvailable) {
+    try {
+      favorites = await getUserFavorites(user.email);
+    } catch {
+      storageAvailable = false;
+    }
+  }
+  const favoriteMonths = new Set(favorites.map((item) => item.releaseMonth));
+  const returnTo = `/?month=${selectedSnapshot.releaseMonth}#report`;
+  const signInPath = chatGPTSignInPath(returnTo);
 
-export default function Home() {
   return (
     <main>
       <header className="topbar">
@@ -26,6 +49,11 @@ export default function Home() {
           <a className="active" href="#report">CPI 研究舱</a>
           <a href="#roadmap">模块航图</a>
           <span className="status"><i /> BLS 数据已同步</span>
+          {user ? (
+            <span className="account">{user.displayName}<a href={chatGPTSignOutPath(returnTo)}>退出</a></span>
+          ) : (
+            <a className="account-link" href={signInPath}>登录收藏</a>
+          )}
         </nav>
       </header>
 
@@ -63,9 +91,26 @@ export default function Home() {
             <p className="eyebrow">INFLATION BRIEFING</p>
             <h2>美国 CPI 分项跟踪</h2>
           </div>
-          <div className="release-meta">
-            <span>报告期 {cpiReport.releaseMonth}</span>
-            <span className="demo-tag">自动更新</span>
+          <div className="report-actions">
+            <HistorySelector
+              selected={selectedSnapshot.releaseMonth}
+              months={history.reports.map((item) => ({
+                value: item.releaseMonth,
+                label: item.report.releaseMonth,
+                favorite: favoriteMonths.has(item.releaseMonth),
+              }))}
+            />
+            <FavoriteButton
+              month={selectedSnapshot.releaseMonth}
+              initialFavorite={favoriteMonths.has(selectedSnapshot.releaseMonth)}
+              isAuthenticated={Boolean(user)}
+              signInPath={signInPath}
+              storageAvailable={storageAvailable}
+            />
+            <div className="release-meta">
+              <span>报告期 {cpiReport.releaseMonth}</span>
+              <span className="demo-tag">自动更新</span>
+            </div>
           </div>
         </div>
 
@@ -142,6 +187,33 @@ export default function Home() {
             ))}
           </div>
         </article>
+
+        {user ? (
+          <article className="panel favorites-panel" id="favorites">
+            <div className="panel-title">
+              <div><span>05</span><h3>我的 CPI 收藏</h3></div>
+              <small>{user.displayName}</small>
+            </div>
+            {!storageAvailable ? (
+              <p className="empty-state">收藏数据库暂不可用，历史报告浏览不受影响。</p>
+            ) : favorites.length ? (
+              <div className="favorite-list">
+                {favorites.map((favorite) => (
+                  <a
+                    className={favorite.releaseMonth === selectedSnapshot.releaseMonth ? "active" : ""}
+                    href={`/?month=${favorite.releaseMonth}#report`}
+                    key={favorite.releaseMonth}
+                  >
+                    <strong>{favorite.report.releaseMonth}</strong>
+                    <span>{favorite.report.headline}</span>
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <p className="empty-state">还没有收藏。点击“收藏本期”，就能在这里快速返回。</p>
+            )}
+          </article>
+        ) : null}
       </section>
 
       <section className="asset-section">
@@ -178,7 +250,7 @@ export default function Home() {
         <div className="brand"><span className="brand-mark">星</span><span><strong>星舰猎盘</strong><small>MACRO INTELLIGENCE PLATFORM</small></span></div>
         <p>数据有源，计算可验，观点可追溯。</p>
         <small>
-          数据来源：<a href={cpiDataMetadata.sourceUrl}>U.S. Bureau of Labor Statistics</a>
+          数据来源：<a href={selectedSnapshot.sourceUrl}>U.S. Bureau of Labor Statistics</a>
           {" · "}不构成投资建议
         </small>
       </footer>

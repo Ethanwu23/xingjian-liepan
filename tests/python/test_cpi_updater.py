@@ -49,13 +49,23 @@ class SnapshotTests(unittest.TestCase):
         now = datetime(2026, 7, 15, tzinfo=timezone.utc)
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "latest.json"
+            history_output = Path(directory) / "history.json"
             with patch("cpi_research.updater.fetch_bls_series", return_value=fixture_series()):
-                self.assertTrue(update_snapshot(output, now=now))
+                self.assertTrue(update_snapshot(output, now=now, history_output=history_output))
                 first = json.loads(output.read_text(encoding="utf-8"))
-                self.assertFalse(update_snapshot(output, now=datetime(2026, 7, 16, tzinfo=timezone.utc)))
+                history = json.loads(history_output.read_text(encoding="utf-8"))
+                self.assertFalse(
+                    update_snapshot(
+                        output,
+                        now=datetime(2026, 7, 16, tzinfo=timezone.utc),
+                        history_output=history_output,
+                    )
+                )
                 second = json.loads(output.read_text(encoding="utf-8"))
 
             self.assertEqual(first, second)
+            self.assertEqual(len(history), 1)
+            self.assertEqual(history[0]["releaseMonth"], "2026-06")
 
 
 if __name__ == "__main__":
